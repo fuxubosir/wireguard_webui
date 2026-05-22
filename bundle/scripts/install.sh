@@ -588,7 +588,7 @@ menu(){
       1) need_root_hint; run_install ;;
       2)
         need_root_hint
-        echo "请输入升级包路径，例如：/tmp/wg-webui-v1.12.42.tar.gz"
+        echo "请输入升级包路径，例如：/tmp/wg-webui-v2.0.0.tar.gz"
         read -r -p "升级包路径: " pkg
         [ -n "$pkg" ] || { echo "❌ 升级包路径不能为空"; continue; }
         run_upgrade "$pkg"
