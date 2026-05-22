@@ -29,7 +29,6 @@ BUNDLE_FILES = [
     "CHANGELOG.md",
     "CONTRIBUTING.md",
     "SECURITY.md",
-    "PROJECT_CONTEXT.md",
     ".gitignore",
     "wg-webui.sh",
     "install.sh",
@@ -62,8 +61,6 @@ BUNDLE_FILES = [
     "docs/INSTALL.md",
     "docs/CONFIGURATION.md",
     "docs/OPERATIONS.md",
-    "docs/DEVELOPMENT.md",
-    "docs/ROADMAP.md",
 ]
 
 IGNORE_PATTERNS = shutil.ignore_patterns(

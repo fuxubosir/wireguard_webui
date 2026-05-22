@@ -4244,7 +4244,7 @@ def _build_current_full_package() -> Path:
     root_name = f"wg-webui-v{ver}"
     root_files = ["README.md", "CHANGELOG.md", "VERSION"]
     bundle_files = [
-        "VERSION", "PACKAGE_TYPE", "README.md", "CHANGELOG.md", "CONTRIBUTING.md", "SECURITY.md", "PROJECT_CONTEXT.md", ".gitignore",
+        "VERSION", "PACKAGE_TYPE", "README.md", "CHANGELOG.md", "CONTRIBUTING.md", "SECURITY.md", ".gitignore",
         "wg-webui.sh", "install.sh", "upgrade.sh", "doctor.sh", "uninstall.sh",
         "release/manifest.json",
         "app/app.py", "app/requirements.txt", "app/core/__init__.py", "app/core/networks.py", "app/core/security.py", "app/templates/index.html", "app/static/css/app.css", "app/static/js/app.js",
@@ -4253,7 +4253,7 @@ def _build_current_full_package() -> Path:
         "tools/repair_allowedips.py", "tools/sync_allowedips.py", "tools/repair_wg_nat.py", "tools/cleanup.py", "tools/release_check.sh", "tools/build_release.py",
         "tools/wireguard-userspace-compat-v0.5.0.tar.gz",
         "tests/test_core_networks.py", "tests/test_core_security.py",
-        "docs/INSTALL.md", "docs/CONFIGURATION.md", "docs/OPERATIONS.md", "docs/DEVELOPMENT.md", "docs/ROADMAP.md",
+        "docs/INSTALL.md", "docs/CONFIGURATION.md", "docs/OPERATIONS.md",
     ]
     root_entry = r'''#!/usr/bin/env bash
 set -euo pipefail
