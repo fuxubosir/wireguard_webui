@@ -1,0 +1,12 @@
+{
+  "version": "v2.0.0",
+  "package_name": "wg-webui-v2.0.0.tar.gz",
+  "packages": {
+    "main": "wg-webui-v2.0.0.tar.gz"
+  },
+  "usage": "统一完整包：网页在线升级和新服务器首次部署都使用 wg-webui-v*.tar.gz",
+  "app_version": "v2.0.0",
+  "files": {
+    "main": "wg-webui-v2.0.0.tar.gz"
+  }
+}

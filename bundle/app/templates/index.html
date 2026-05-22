@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WireGuard WebUI Lite</title>
+  <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%232563eb"/><path d="M32 9 49 16v13c0 12-7 21-17 26-10-5-17-14-17-26V16l17-7Z" fill="%23ffffff"/><path d="M32 15 44 20v10c0 8-5 15-12 19-7-4-12-11-12-19V20l12-5Z" fill="%232563eb"/></svg>' />
+  <link rel="stylesheet" href="/static/css/app.css?v=2.0.0" />
+</head>
+<body>
+<div class="layout">
+  <aside class="side">
+    <div class="brand"><div class="logo">🛡️</div><div>WireGuard<br>WebUI Lite</div></div>
+    <nav class="nav">
+      <a class="active" href="#dashboard" data-nav="dashboard">仪表盘</a>
+      <a href="#users" data-nav="users">用户管理</a>
+      <a href="#sites" data-nav="sites">站点管理</a>
+      <a href="#permissions" data-nav="permissions">权限管理</a>
+      <a href="#system" data-nav="system">系统管理</a>
+      <a href="#logs" data-nav="logs">运维工具</a>
+    </nav>
+    <div class="side-version"><strong>WireGuard WebUI Lite</strong><span id="footerVersion">读取中</span></div>
+  </aside>
+  <main class="main">
+    <div class="top"><div><h1 id="pageTitle">主页</h1><div class="page-title-sub" id="pageSubtitle">服务状态、统计信息和常用操作</div></div><div class="top-actions"><button id="btnApplyConfigTop" class="top-apply-btn" onclick="applyConfig()" disabled>配置已生效</button><div class="user-pill">admin</div><button class="logout-btn" onclick="logout()">退出登录</button></div></div>
+    <section class="page-section dashboard-page active" id="dashboard" data-title="仪表盘" data-subtitle="服务状态、在线状态、最近握手、待应用配置和系统信息">
+    <section class="card wg-service" id="serviceCard">
+      <div>
+        <div class="svc-title">WireGuard 服务</div>
+        <div class="svc-sub"><span id="svcName">wg-quick@wg0</span> · <span id="svcEnabled">读取中</span></div>
+      </div>
+      <div class="svc-actions">
+        <span class="svc-state" id="svcState"><span class="dot off"></span>读取中</span>
+        <button id="btnSvcStart" class="btn-green" onclick="serviceAction('start')">启动</button>
+        <button id="btnSvcRestart" onclick="serviceAction('restart')">重启</button>
+        <button id="btnSvcStop" class="btn-red" onclick="serviceAction('stop')">关闭</button>
+      </div>
+    </section>
+
+
+    <section class="stats">
+      <div class="stat"><div class="label">节点总数</div><div class="value" id="statTotal">0</div><div class="hint" id="statTotalHint">用户 0 / 站点 0</div><div class="bar"><span id="barTotal"></span></div></div>
+      <div class="stat"><div class="label">用户在线</div><div class="value" id="statUserOnline">0 / 0</div><div class="hint" id="statUserRate">在线率 0%</div><div class="bar"><span id="barUserOnline"></span></div></div>
+      <div class="stat"><div class="label">站点在线</div><div class="value" id="statSiteOnline">0 / 0</div><div class="hint" id="statSiteRate">在线率 0%</div><div class="bar"><span id="barSiteOnline"></span></div></div>
+      <div class="stat"><div class="label">累计流量</div><div class="value" id="statTraffic">0 B</div><div class="hint" id="statTrafficHint">接收 0 B / 发送 0 B</div><div class="bar"><span id="barTraffic"></span></div></div>
+    </section>
+
+    <section class="dashboard-grid">
+      <div class="card"><h3 class="subsection-title">在线用户 <span class="small-muted" id="dashboardUserOnlineText"></span></h3><div class="mini-list" id="dashboardOnlineUsers"><div class="mini-empty">暂无在线用户</div></div></div>
+      <div class="card"><h3 class="subsection-title">在线站点 <span class="small-muted" id="dashboardSiteOnlineText"></span></h3><div class="mini-list" id="dashboardOnlineSites"><div class="mini-empty">暂无在线站点</div></div></div>
+      <div class="card"><h3 class="subsection-title">最近握手 <span class="small-muted">按时间排序</span></h3><div class="mini-list" id="dashboardRecentHandshake"><div class="mini-empty">暂无握手记录</div></div></div>
+    </section>
+    <section class="card page-block" id="systemInfoPanel">
+      <h3 class="section-title">系统信息</h3>
+      <div class="env-grid system-grid">
+        <div class="env-item"><div class="env-icon">🖥️</div><div><div class="env-label">WebUI 版本</div><div class="env-value" id="envOS">读取中</div><div class="env-sub" id="envTime">读取中</div></div></div>
+        <div class="env-item"><div class="env-icon">🧩</div><div><div class="env-label">WireGuard 实例</div><div class="env-value" id="envInstance">读取中</div><div class="env-sub" id="envInstanceSub">读取中</div></div></div>
+        <div class="env-item"><div class="env-icon">🛡️</div><div><div class="env-label">服务状态</div><div class="env-value"><span class="status-badge" id="envWgStatus">读取中</span></div><div class="env-sub" id="envServiceSub">读取中</div></div></div>
+        <div class="env-item"><div class="env-icon">📊</div><div><div class="env-label">资源占用</div><div class="env-value" id="envTools">读取中</div><div class="env-sub" id="envRuntimeSub">读取中</div></div></div>
+        <div class="env-item"><div class="env-icon">📍</div><div><div class="env-label">站点地址池</div><div class="env-value" id="envSitePool">读取中</div><div class="env-sub" id="envSitePoolSub">读取中</div></div></div>
+        <div class="env-item"><div class="env-icon">👤</div><div><div class="env-label">用户地址池</div><div class="env-value" id="envUserPool">读取中</div><div class="env-sub" id="envUserPoolSub">读取中</div></div></div>
+      </div>
+    </section>
+    </section>
+
+    <section class="page-section" id="users" data-title="用户管理" data-subtitle="用户列表、新增用户、客户端配置和用户状态">
+      <section class="card page-block">
+        <h3 class="subsection-title">新增用户 <span class="small-muted">创建后可查看二维码、下载客户端配置</span></h3>
+        <div class="form-row form-user">
+          <input id="userName" placeholder="用户名" />
+          <input id="userOwner" placeholder="归属人" />
+          <button onclick="addUser()">+ 新增用户</button>
+        </div>
+        <div class="tips">名称建议使用字母、数字、横线、下划线。</div>
+      </section>
+      <section class="card page-block">
+      <h3 class="section-title user-list-title">用户列表 <span class="count" id="userCount"></span><span class="user-list-tools"><span class="user-filter-tools"><button id="btnToggleUserGroup" class="btn-gray" onclick="toggleUserGrouping()">全部节点</button><input id="userSearch" placeholder="搜索用户" oninput="renderPeers()"><span class="search-hint" id="userSearchHint"></span></span><span class="view-switch"><button class="btn-gray" data-view-toggle="user" onclick="toggleViewMode('user')" type="button">卡片显示</button></span><span class="user-refresh-tools"><span class="small-muted" id="peerRefreshText">状态读取中...</span><button onclick="manualRefreshPeers()">刷新</button></span></span></h3>
+      <div class="table-wrap" id="userTableWrap"><table class="peer-table"><colgroup><col class="col-name"><col class="col-status"><col class="col-vpn"><col class="col-handshake"><col class="col-traffic"><col class="col-endpoint"><col class="col-action"></colgroup><thead><tr><th>节点</th><th>状态</th><th>地址 / 网段</th><th>最后握手</th><th>流量</th><th>远端</th><th>操作</th></tr></thead><tbody id="userBody"></tbody></table></div><div class="node-card-board" id="userCardBoard" style="display:none"></div><div class="list-more" id="userMoreBox" style="display:none"><button class="btn-gray" id="userMoreBtn" onclick="toggleListMore('user')">展开更多</button></div>
+      </section>
+    </section>
+
+    <section class="page-section" id="sites" data-title="站点管理" data-subtitle="站点列表、新增站点、站点网段和站点状态">
+      <section class="card page-block">
+        <h3 class="subsection-title">新增站点 <span class="small-muted">创建后请点击顶部应用配置刷新路由</span></h3>
+        <div class="form-row form-site">
+          <input id="siteName" placeholder="站点名称" />
+          <input id="siteLan" placeholder="内网网段，可空" />
+          <input id="siteIf" placeholder="现场网卡，可空" />
+          <input id="siteRemark" placeholder="备注" />
+          <button class="btn-green" onclick="addSite()">+ 新增站点</button>
+        </div>
+        <div class="tips">内网网段和现场网卡可空，后续可补充。</div>
+      </section>
+
+      <section class="card page-block">
+      <h3 class="section-title">站点列表 <span class="count" id="siteCount"></span><span class="section-search"><input id="siteSearch" placeholder="搜索站点" oninput="renderPeers()"><span class="search-hint" id="siteSearchHint"></span></span><span class="view-switch"><button class="btn-gray" data-view-toggle="site" onclick="toggleViewMode('site')" type="button">卡片显示</button></span></h3>
+      <div class="table-wrap" id="siteTableWrap"><table class="peer-table"><colgroup><col class="col-name"><col class="col-status"><col class="col-vpn"><col class="col-handshake"><col class="col-traffic"><col class="col-endpoint"><col class="col-action"></colgroup><thead><tr><th>节点</th><th>状态</th><th>地址 / 网段</th><th>最后握手</th><th>流量</th><th>远端</th><th>操作</th></tr></thead><tbody id="siteBody"></tbody></table></div><div class="node-card-board" id="siteCardBoard" style="display:none"></div><div class="list-more" id="siteMoreBox" style="display:none"><button class="btn-gray" id="siteMoreBtn" onclick="toggleListMore('site')">展开更多</button></div>
+      </section>
+    </section>
+
+    <section class="card page-section" id="permissions" data-title="权限管理" data-subtitle="用户权限、批量授权、站点授权和 ACL 生效状态">
+      <h3 class="section-title permission-list-title">权限管理 <span class="count" id="permissionCount"></span><span class="permission-list-tools"><span class="user-filter-tools"><input id="permissionSearch" placeholder="搜索用户 / 归属人 / 权限" oninput="renderPeers()"><span class="search-hint" id="permissionSearchHint"></span></span><span class="view-switch"><button class="btn-gray" data-view-toggle="permission" onclick="toggleViewMode('permission')" type="button">卡片显示</button></span><span class="section-actions"><span class="small-muted" id="allowedSyncText">访问控制状态读取中...</span><button class="btn-theme" onclick="openBulkAccess()">批量授权</button><button class="btn-theme" onclick="openSiteAuthorization()">站点授权</button><button id="btnRefreshAllowedIPs" class="btn-gray" onclick="refreshAllowedIPs()">按权限同步用户网段</button></span></span></h3>
+      <div class="reserved-desc">权限相关操作集中在这里管理。支持单用户授权、批量授权、从站点反向选择可访问用户。修改权限后，需要按权限同步用户网段，再点击绿色“应用配置”刷新服务端访问控制；ACL 会同步添加和删除对应放行/拒绝规则。</div>
+      <div class="table-wrap" id="permissionTableWrap" style="margin-top:12px"><table class="peer-table permission-table"><colgroup><col class="col-name"><col class="col-owner"><col class="col-access"><col class="col-action"></colgroup><thead><tr><th>用户</th><th>归属人</th><th>访问范围</th><th>操作</th></tr></thead><tbody id="permissionBody"></tbody></table></div><div class="node-card-board permission-card-board" id="permissionCardBoard" style="display:none"></div><div class="list-more" id="permissionMoreBox" style="display:none"><button class="btn-gray" id="permissionMoreBtn" onclick="toggleListMore('permission')">展开更多</button></div>
+    </section>
+
+    <section class="page-section" id="system" data-title="系统管理" data-subtitle="配置中心、WebUI 升级、部署包和日志清理">
+      <div class="system-sections">
+        <section class="card page-block" id="upgradePanel">
+          <h3 class="section-title">WebUI 升级 <span class="count" id="versionText">读取中</span><span class="count" id="upgradeStatusText"></span></h3>
+          <div class="warn-note">升级只会停止/启动 WebUI 服务，不会停止、不重启 <code>wg-quick@wg0</code>，不会影响正在运行的 WireGuard 隧道。</div>
+          <div class="upgrade-box" style="margin-top:14px">
+            <input id="upgradeFile" type="file" accept=".gz,.tar.gz" />
+            <button onclick="uploadUpgrade()">上传升级包</button>
+            <button class="btn-green" id="btnStartUpgrade" onclick="startUpgrade()" disabled>开始升级</button>
+          </div>
+          <div class="tips" id="upgradePkgText">请选择统一完整升级包 wg-webui-vX.X.X.tar.gz。上传后会先预检，预检通过才能升级。</div>
+          <pre class="upgrade-log" id="precheckLog">暂无预检结果</pre>
+        </section>
+        <section class="card page-block" id="configPanel">
+          <h3 class="section-title">配置中心 <span class="count" id="settingsStatus">读取中</span><span class="section-actions"><button class="btn-green" onclick="saveSystemSettings()">保存配置</button></span></h3>
+          <div class="settings-grid">
+            <div class="settings-group"><h4>基础配置</h4><label>客户端 DNS<input id="set_client_dns" placeholder="DNS，可空"></label><label>固定下发网段<textarea id="set_reserved_client_allowed_ips" placeholder="每行一个网段，例如 192.168.10.0/24"></textarea></label><label>在线判定秒数<input id="set_online_threshold_seconds" type="number" min="30"></label><div class="tips compact-tip">固定下发网段会写入用户客户端 AllowedIPs，适合公司内网、保留网段等长期需要访问的网络。</div></div>
+            <div class="settings-group security-group"><h4>安全配置</h4><label>登录失败次数<input id="set_login_max_attempts" type="number" min="1"></label><label>失败统计时间（秒）<input id="set_login_window_seconds" type="number" min="30"></label><label>失败后锁定时长（秒）<input id="set_login_lockout_seconds" type="number" min="30"></label><label>会话有效期（分钟）<input id="set_session_ttl_minutes" type="number" min="5"></label><div class="tips compact-tip">用于限制连续登录失败和会话过期时间；默认会话有效期为 30 分钟。</div></div>
+            <div class="settings-more-unified" id="settingsMoreUnified">
+              <button class="btn-gray show-more-center" id="btnSettingsMore" onclick="toggleSettingsMore()" type="button">展示更多</button>
+              <div class="settings-more-content" id="settingsMoreContent">
+                <div class="settings-group maintenance-group"><h4>维护策略</h4><label>WireGuard 备份保留<input id="set_backup_keep" type="number" min="1"></label><label>WebUI 备份保留<input id="set_webui_backup_keep" type="number" min="1"></label><label>配置备份保留<input id="set_config_backup_keep" type="number" min="1"></label><label>日志保留天数<input id="set_log_keep_days" type="number" min="1"></label><label>发布包保留<input id="set_package_keep" type="number" min="1"></label></div>
+                <div class="settings-group account-group"><h4>安全账号 <span class="count" id="accountStatus">读取中</span></h4><label>当前用户名<input id="acct_username" autocomplete="username"></label><label>当前密码<input id="acct_current_password" type="password" autocomplete="current-password"></label><label>新密码<input id="acct_new_password" type="password" autocomplete="new-password" placeholder="至少 8 位"></label><label>确认新密码<input id="acct_confirm_password" type="password" autocomplete="new-password"></label><div class="tips" id="accountHint">账号修改后点击上方“保存配置”，保存成功后需要重新登录。</div></div>
+                <div class="settings-group settings-advanced" id="advancedSettingsPanel"><h4>高级设置 <span class="count">默认只读</span></h4><div class="advanced-head"><div class="warn-note">影响连接和地址分配，修改前请确认。修改 WireGuard 网段或地址池后，建议重启 WebUI 让页面和后端重新加载配置；不会重启 WireGuard。</div><div class="advanced-head-actions"><button class="btn-warn" id="btnUnlockAdvanced" onclick="unlockAdvancedSettings()" type="button">解锁配置修改</button></div></div><div class="advanced-grid"><div class="advanced-column"><h4>运行配置</h4><label>服务端 Endpoint<input id="set_server_endpoint" disabled placeholder="公网IP:端口"></label><label>WireGuard 接口<input id="set_wg_if" disabled placeholder="wg0"></label><label>WireGuard 网段<input id="set_wg_cidr" disabled placeholder="10.6.0.0/24"></label></div><div class="advanced-column"><h4>地址池配置</h4><div class="settings-two"><label>站点起始<input id="set_site_ip_start" type="number" disabled></label><label>站点结束<input id="set_site_ip_end" type="number" disabled></label></div><div class="settings-two"><label>用户起始<input id="set_user_ip_start" type="number" disabled></label><label>用户结束<input id="set_user_ip_end" type="number" disabled></label></div></div></div><div class="advanced-actions" id="advancedActions" style="display:none"><button class="btn-green" onclick="saveAdvancedSettings()" type="button">保存高级设置</button><button class="btn-gray" onclick="cancelAdvancedSettings()" type="button">取消修改</button><button class="btn-warn" onclick="restartWebUI()" type="button">重启 WebUI</button></div></div>
+          </div>
+            </div>
+          </div>
+          <div class="tips" id="settingsHint">常用配置可直接保存；账号修改后需要重新登录；高级设置需先解锁后修改。</div>
+        </section>
+        <div class="system-row">
+          <section class="card page-block deploy-panel" id="backupPanel">
+            <h3 class="section-title">系统部署包</h3>
+            <div class="deploy-action-grid">
+              <div class="action-info-card">
+                <div class="env-item deploy-info-card">
+                  <div class="env-icon">📦</div>
+                  <div>
+                    <div class="env-label">完整部署包</div>
+                    <div class="env-value">当前 WebUI 版本</div>
+                    <div class="env-sub">用于新服务器安装、迁移或留档备份</div>
+                  </div>
+                </div>
+                <button class="btn-green download-package-btn" onclick="downloadReleasePackage('full')">下载系统部署包</button>
+              </div>
+              <div class="action-info-card">
+                <div class="env-item deploy-info-card">
+                  <div class="env-icon">🧹</div>
+                  <div>
+                    <div class="env-label">独立卸载工具</div>
+                    <div class="env-value">一键卸载脚本</div>
+                    <div class="env-sub">用于清理 WebUI 或完整清理 WireGuard</div>
+                  </div>
+                </div>
+                <button class="btn-red download-package-btn" onclick="downloadReleasePackage('uninstaller')">下载一键卸载脚本</button>
+              </div>
+            </div>
+            <div class="backup-list" id="backupList" style="display:none"></div>
+          </section>
+          <section class="card page-block" id="cleanupPanel">
+            <h3 class="section-title">日志清理 <span class="count" id="cleanupSummary">未扫描</span></h3>
+            <div class="cleanup-action-grid">
+              <div class="action-info-card">
+                <div class="env-item">
+                  <div class="env-icon">🧾</div>
+                  <div>
+                    <div class="env-label">可清理项目</div>
+                    <div class="env-value" id="cleanupCount">-</div>
+                    <div class="env-sub">旧日志 / 旧备份 / 历史包</div>
+                  </div>
+                </div>
+                <button onclick="previewCleanup()">扫描可清理内容</button>
+              </div>
+              <div class="action-info-card">
+                <div class="env-item">
+                  <div class="env-icon">💾</div>
+                  <div>
+                    <div class="env-label">可释放空间</div>
+                    <div class="env-value" id="cleanupBytes">-</div>
+                    <div class="env-sub" id="cleanupPolicy">按当前保留策略</div>
+                  </div>
+                </div>
+                <button class="btn-red" onclick="applyCleanup()">一键安全清理</button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="card page-section log-page ops-page" id="logs" data-title="运维工具" data-subtitle="诊断工具、快捷指令和必要日志">
+      <div class="section-head ops-head">
+        <div>
+          <h3 class="section-title">运维工具</h3>
+          <div class="ops-subtitle">把常用排障操作集中到这里，优先看诊断结果和快捷指令，日志只作为辅助。</div>
+        </div>
+        <label class="small-muted"><input type="checkbox" id="logAutoScroll" checked> 自动滚动</label>
+      </div>
+      <div class="ops-grid">
+        <button class="ops-card active" data-ops-tool="doctor" onclick="runDoctorPanel()"><span class="ops-icon">🩺</span><span><b>一键诊断</b><em>检查服务、配置、路由和常见问题</em></span></button>
+        <button class="ops-card" data-ops-tool="service" onclick="loadOps('service')"><span class="ops-icon">🧭</span><span><b>服务状态</b><em>WebUI 和 WireGuard systemd 状态</em></span></button>
+        <button class="ops-card" data-ops-tool="network" onclick="loadOps('network')"><span class="ops-icon">🌐</span><span><b>路由 / 转发</b><em>ip_forward、路由表、FORWARD、NAT</em></span></button>
+        <button class="ops-card" data-ops-tool="ping" onclick="showPingTool()"><span class="ops-icon">📍</span><span><b>Ping / 端口检测</b><em>单个 IP/域名 Ping 与 TCP 端口检测</em></span></button>
+        <button class="ops-card" data-ops-tool="scan" onclick="showNetworkScanTool()"><span class="ops-icon">🔎</span><span><b>网段快速扫描</b><em>并发扫描 /24 内的在线地址</em></span></button>
+        <button class="ops-card" data-ops-tool="commands" onclick="loadOps('commands')"><span class="ops-icon">⌨️</span><span><b>快捷指令</b><em>现场排障常用命令，可复制执行</em></span></button>
+      </div>
+      <div class="ops-log-actions">
+        <span>必要日志：</span>
+        <button class="btn-gray" onclick="loadLog('wireguard')">WireGuard 日志</button>
+        <button class="btn-gray" onclick="loadLog('webui')">WebUI 日志</button>
+        <button class="btn-gray" onclick="loadLog('upgrade')">升级日志</button>
+      </div>
+      <pre class="upgrade-log runtime-log-full" id="runtimeLog">点击上方工具开始诊断。单点连通性用“Ping / 端口检测”，批量找在线地址用“网段快速扫描”。</pre>
+    </section>
+
+  </main>
+</div>
+
+<div class="toast-box" id="toastBox"></div>
+
+<div class="modal" id="modal"><div><div class="modal-head"><h3 id="modalTitle"></h3><button class="btn-gray" onclick="closeModal()">关闭</button></div><div id="modalBody"></div></div></div>
+
+<script src="/static/js/app.js?v=2.0.0"></script>
+</body></html>
