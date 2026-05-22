@@ -4242,9 +4242,9 @@ def _build_current_full_package() -> Path:
     ver = _safe_version_tag()
     out = UPGRADE_PACKAGE_DIR / f"wg-webui-v{ver}-current.tar.gz"
     root_name = f"wg-webui-v{ver}"
-    root_files = ["README.md", "CHANGELOG.md", "VERSION"]
+    root_files = ["README.md", "VERSION"]
     bundle_files = [
-        "VERSION", "PACKAGE_TYPE", "README.md", "CHANGELOG.md", "CONTRIBUTING.md", "SECURITY.md", ".gitignore",
+        "VERSION", "PACKAGE_TYPE", "README.md", "SECURITY.md", ".gitignore",
         "wg-webui.sh", "install.sh", "upgrade.sh", "doctor.sh", "uninstall.sh",
         "release/manifest.json",
         "app/app.py", "app/requirements.txt", "app/core/__init__.py", "app/core/networks.py", "app/core/security.py", "app/templates/index.html", "app/static/css/app.css", "app/static/js/app.js",

@@ -618,7 +618,7 @@ case "${1:-}" in
 esac
 EOF_ROOT_ENTRY
   chmod +x "$PKG_TMP/wg-webui-v${PKG_VERSION}/wg-webui.sh"
-  for f in README.md CHANGELOG.md VERSION; do
+  for f in README.md VERSION; do
     [ -f "$APP_DIR/$f" ] && cp -a "$APP_DIR/$f" "$PKG_TMP/wg-webui-v${PKG_VERSION}/$f" 2>/dev/null || true
   done
   [ -f "$APP_DIR/release/manifest.json" ] && cp -a "$APP_DIR/release/manifest.json" "$PKG_TMP/wg-webui-v${PKG_VERSION}/manifest.json" 2>/dev/null || true

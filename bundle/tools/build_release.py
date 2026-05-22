@@ -18,7 +18,6 @@ RELEASE_DIR = ROOT / "release"
 
 ROOT_FILES = [
     "README.md",
-    "CHANGELOG.md",
     "VERSION",
 ]
 
@@ -26,8 +25,6 @@ BUNDLE_FILES = [
     "VERSION",
     "PACKAGE_TYPE",
     "README.md",
-    "CHANGELOG.md",
-    "CONTRIBUTING.md",
     "SECURITY.md",
     ".gitignore",
     "wg-webui.sh",

@@ -20,7 +20,6 @@ WireGuard WebUI 是一个给原生 WireGuard 部署使用的轻量级 Web 管理
 wg-webui-v2.0.0/
 |-- wg-webui.sh      # 统一操作入口
 |-- README.md        # 使用说明
-|-- CHANGELOG.md     # 更新记录
 |-- VERSION          # 当前版本
 |-- manifest.json    # 发布包清单
 `-- bundle/          # WebUI 程序、脚本、配置、工具、文档和测试
